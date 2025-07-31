@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import tht.adaptive.ApiUlion.DTOs.requests.UsuarioRequest;
 
 @Data
 @NoArgsConstructor
@@ -27,5 +28,15 @@ public class UsuarioEntity {
 
     private String responsabilidad;//administrador, editor de preguntas, editor parcial de preguntas
 
-
+    public UsuarioEntity(UsuarioRequest usuarioRequest){
+        this.contrasenia= usuarioRequest.getContrasenia();
+        this.nombre=usuarioRequest.getNombre();
+        this.telefono= usuarioRequest.getTelefono();
+        if(!usuarioRequest.getEmail().isBlank()){
+            this.eMail=usuarioRequest.getEmail();
+        }
+        if(!usuarioRequest.getResponsabilidad().isBlank()){
+            this.responsabilidad=usuarioRequest.getResponsabilidad();
+        }
+    }
 }
