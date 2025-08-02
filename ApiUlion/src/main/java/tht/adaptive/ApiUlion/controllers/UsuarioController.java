@@ -5,6 +5,7 @@ import tht.adaptive.ApiUlion.DTOs.requests.UsuarioRequest;
 import tht.adaptive.ApiUlion.DTOs.responses.UsuarioResponse;
 import tht.adaptive.ApiUlion.services.UsuarioService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("api/v2/usuarios")
 public class UsuarioController {
@@ -16,11 +17,13 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public UsuarioResponse login(@RequestBody UsuarioRequest request){
+        System.out.println("login");
         return usuarioService.login(request);//se permite el inicio de sesion con telefono y nombre de usuario
     }
 
     @PostMapping
     public UsuarioResponse signUp(@RequestBody UsuarioRequest request){
+        System.out.println("singUp");
         return usuarioService.signIn(request);
     }
 }
