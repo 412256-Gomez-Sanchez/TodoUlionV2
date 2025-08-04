@@ -26,4 +26,10 @@ public class UsuarioController {
         System.out.println("singUp");
         return usuarioService.signIn(request);
     }
+    
+    @GetMapping("/{id}/monedas")
+    public UsuarioResponse getMonedas(@PathVariable String id){
+        System.out.println("getMonedas");
+        return usuarioService.getMonedas(id);
+    }
 }

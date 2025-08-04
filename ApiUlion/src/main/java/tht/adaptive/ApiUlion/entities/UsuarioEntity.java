@@ -5,7 +5,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.http.HttpStatus;
 import tht.adaptive.ApiUlion.DTOs.requests.UsuarioRequest;
+import tht.adaptive.ApiUlion.configs.exceptions.BusinessException;
 
 @Data
 @NoArgsConstructor
@@ -32,11 +34,16 @@ public class UsuarioEntity {
         this.contrasenia= usuarioRequest.getContrasenia();
         this.nombre=usuarioRequest.getNombre();
         this.telefono= usuarioRequest.getTelefono();
-        if(!usuarioRequest.getEmail().isBlank()){
+        if(usuarioRequest.getEmail()!=null && !usuarioRequest.getEmail().isBlank()){
             this.eMail=usuarioRequest.getEmail();
         }
-        if(!usuarioRequest.getResponsabilidad().isBlank()){
-            this.responsabilidad=usuarioRequest.getResponsabilidad();
+        if(usuarioRequest.getResponsabilidad()!=null){
+            //verifico que la responsabilidad sea alguna de las 3
+            if(!usuarioRequest.getResponsabilidad().equals("administrador")
+                    &&!usuarioRequest.getResponsabilidad().equals("editor de preguntas")
+                    &&!usuarioRequest.getResponsabilidad().equals("editor parcial de preguntas")){
+                throw new BusinessException(HttpStatus.BAD_REQUEST,"la responsabilidad no puede ser otra mas que: administrador, editor de preguntas o editor parcial de preguntas");
+            }
         }
     }
 }

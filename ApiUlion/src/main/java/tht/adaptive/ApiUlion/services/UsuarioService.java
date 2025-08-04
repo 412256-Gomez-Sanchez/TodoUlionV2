@@ -6,14 +6,14 @@ import tht.adaptive.ApiUlion.DTOs.requests.UsuarioRequest;
 import tht.adaptive.ApiUlion.DTOs.responses.UsuarioResponse;
 import tht.adaptive.ApiUlion.configs.exceptions.BusinessException;
 import tht.adaptive.ApiUlion.entities.UsuarioEntity;
-import tht.adaptive.ApiUlion.repositories.UsuarioRepotisory;
+import tht.adaptive.ApiUlion.repositories.UsuarioRepository;
 
 @Service
 public class UsuarioService {
-    private final UsuarioRepotisory usuarioRepotisory;
+    private final UsuarioRepository usuarioRepository;
 
-    public UsuarioService(UsuarioRepotisory usuarioRepotisory) {
-        this.usuarioRepotisory = usuarioRepotisory;
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
     public UsuarioResponse login(UsuarioRequest request){
@@ -24,13 +24,13 @@ public class UsuarioService {
         UsuarioEntity usuarioEntity;
         if(request.getTelefono()!=null && !request.getTelefono().isBlank()){
             System.out.println("buscado con telefono: "+request.getTelefono()+", contrasenia: "+request.getContrasenia());
-            usuarioEntity = usuarioRepotisory.findByTelefonoAndContrasenia(request.getTelefono(), request.getContrasenia()).orElseThrow(()->
+            usuarioEntity = usuarioRepository.findByTelefonoAndContrasenia(request.getTelefono(), request.getContrasenia()).orElseThrow(()->
                     new BusinessException(HttpStatus.NOT_FOUND,"usuario no encontrado")
             );
         }
         else if(request.getNombre()!=null && !request.getNombre().isBlank()){
             System.out.println("buscado con nombre: "+request.getNombre()+", contrasenia: "+request.getContrasenia());
-            usuarioEntity=usuarioRepotisory.findByNombreAndContrasenia(request.getNombre(), request.getContrasenia()).orElseThrow(()->
+            usuarioEntity= usuarioRepository.findByNombreAndContrasenia(request.getNombre(), request.getContrasenia()).orElseThrow(()->
                 new BusinessException(HttpStatus.NOT_FOUND,"usuario no encontrado")
             );
         }
@@ -58,15 +58,11 @@ public class UsuarioService {
         }
         //verificar que el telefono tenga solo numeros
 
-        //verifico si existe el campo responsabilidad
-        if(request.getResponsabilidad()!=null){
-            //verifico que la responsabilidad sea alguna de las 3
-            if(!request.getResponsabilidad().equals("administrador")
-                    &&!request.getResponsabilidad().equals("editor de preguntas")
-                    &&!request.getResponsabilidad().equals("editor parcial de preguntas")){
-                throw new BusinessException(HttpStatus.BAD_REQUEST,"la responsabilidad no puede ser otra mas que: administrador, editor de preguntas o editor parcial de preguntas");
-            }
-        }
-        return new UsuarioResponse(usuarioRepotisory.save(new UsuarioEntity(request)));
+        return new UsuarioResponse(usuarioRepository.save(new UsuarioEntity(request)));
+    }
+
+    public UsuarioResponse getMonedas(String id){
+        return new UsuarioResponse(usuarioRepository.findById(id).orElseThrow(()->
+                new BusinessException(HttpStatus.NOT_FOUND,"el usuario no existe")));
     }
 }
