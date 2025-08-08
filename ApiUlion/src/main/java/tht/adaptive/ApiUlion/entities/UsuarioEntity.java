@@ -5,8 +5,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.http.HttpStatus;
-import tht.adaptive.ApiUlion.DTOs.requests.UsuarioRequest;
+import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
 import tht.adaptive.ApiUlion.configs.exceptions.BusinessException;
 
 @Data
@@ -30,20 +31,26 @@ public class UsuarioEntity {
 
     private String responsabilidad;//administrador, editor de preguntas, editor parcial de preguntas
 
-    public UsuarioEntity(UsuarioRequest usuarioRequest){
-        this.contrasenia= usuarioRequest.getContrasenia();
-        this.nombre=usuarioRequest.getNombre();
-        this.telefono= usuarioRequest.getTelefono();
-        if(usuarioRequest.getEmail()!=null && !usuarioRequest.getEmail().isBlank()){
-            this.eMail=usuarioRequest.getEmail();
+    @Field(name="id_empresa")
+    private String idEmpresa;
+
+    public UsuarioEntity(UsuarioDto usuarioDto){
+        this.contrasenia= usuarioDto.getContrasenia();
+        this.nombre= usuarioDto.getNombre();
+        this.telefono= usuarioDto.getTelefono();
+        if(usuarioDto.getEmail()!=null && !usuarioDto.getEmail().isBlank()){
+            this.eMail= usuarioDto.getEmail();
         }
-        if(usuarioRequest.getResponsabilidad()!=null){
+        if(usuarioDto.getResponsabilidad()!=null){
             //verifico que la responsabilidad sea alguna de las 3
-            if(!usuarioRequest.getResponsabilidad().equals("administrador")
-                    &&!usuarioRequest.getResponsabilidad().equals("editor de preguntas")
-                    &&!usuarioRequest.getResponsabilidad().equals("editor parcial de preguntas")){
+            if(!usuarioDto.getResponsabilidad().equals("administrador")
+                    &&!usuarioDto.getResponsabilidad().equals("editor de preguntas")
+                    &&!usuarioDto.getResponsabilidad().equals("editor parcial de preguntas")){
                 throw new BusinessException(HttpStatus.BAD_REQUEST,"la responsabilidad no puede ser otra mas que: administrador, editor de preguntas o editor parcial de preguntas");
             }
+        }
+        if(usuarioDto.getIdEmpresa()!=null){
+            this.idEmpresa=usuarioDto.getIdEmpresa();
         }
     }
 }

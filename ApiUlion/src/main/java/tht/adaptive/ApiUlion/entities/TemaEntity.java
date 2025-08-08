@@ -12,12 +12,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document(collection = "temas")
 public class TemaEntity {
     @Id
-    private String id;
-
-    @Indexed(unique = true)
+//    @Indexed(unique = true)
     private String tema;
     //cultura general, patrocinada, arte, historia, etc.
 
     @Field(name="es_buscable")
-    private boolean esBuscable=true;
+    private Boolean esBuscable=true;
 }

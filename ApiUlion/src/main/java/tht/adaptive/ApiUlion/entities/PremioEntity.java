@@ -27,4 +27,7 @@ public class PremioEntity {
 
     @Field(name="cantidad_disponible")
     private int cantidadDisponible;
+
+    @Field(name="es_cantidad_por_mes")
+    private Boolean esCantidadPorMes;
 }

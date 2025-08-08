@@ -2,8 +2,7 @@ package tht.adaptive.ApiUlion.services;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import tht.adaptive.ApiUlion.DTOs.requests.UsuarioRequest;
-import tht.adaptive.ApiUlion.DTOs.responses.UsuarioResponse;
+import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
 import tht.adaptive.ApiUlion.configs.exceptions.BusinessException;
 import tht.adaptive.ApiUlion.entities.UsuarioEntity;
 import tht.adaptive.ApiUlion.repositories.UsuarioRepository;
@@ -16,7 +15,7 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public UsuarioResponse login(UsuarioRequest request){
+    public UsuarioDto login(UsuarioDto request){
         if(request.getContrasenia()==null || request.getContrasenia().isBlank()){
             throw new BusinessException(HttpStatus.BAD_REQUEST,"contrasenia no puede ser nulo");
         }
@@ -30,7 +29,7 @@ public class UsuarioService {
         }
         else if(request.getNombre()!=null && !request.getNombre().isBlank()){
             System.out.println("buscado con nombre: "+request.getNombre()+", contrasenia: "+request.getContrasenia());
-            usuarioEntity= usuarioRepository.findByNombreAndContrasenia(request.getNombre(), request.getContrasenia()).orElseThrow(()->
+            usuarioEntity = usuarioRepository.findByNombreAndContrasenia(request.getNombre(), request.getContrasenia()).orElseThrow(()->
                 new BusinessException(HttpStatus.NOT_FOUND,"usuario no encontrado")
             );
         }
@@ -38,11 +37,13 @@ public class UsuarioService {
             throw new BusinessException(HttpStatus.BAD_REQUEST,"telefono o nombre debe no ser nulo");
         }
 
-        return new UsuarioResponse(usuarioEntity);
+        UsuarioDto usuarioDto = new UsuarioDto();
+        usuarioDto.toGetLogSignResponse(usuarioEntity);
+        return usuarioDto;
 
     }
 
-    public UsuarioResponse signIn(UsuarioRequest request){
+    public UsuarioDto signIn(UsuarioDto request){
         //verifico que ningun campo critico venga nulo
         if(request.getNombre()==null || request.getTelefono()==null|| request.getContrasenia()==null
                 ||request.getNombre().isBlank() || request.getTelefono().isBlank() || request.getContrasenia().isBlank()){
@@ -58,11 +59,16 @@ public class UsuarioService {
         }
         //verificar que el telefono tenga solo numeros
 
-        return new UsuarioResponse(usuarioRepository.save(new UsuarioEntity(request)));
+        UsuarioDto usuarioDto = new UsuarioDto();
+        usuarioDto.toGetLogSignResponse(usuarioRepository.save(new UsuarioEntity(request)));
+        return usuarioDto;
     }
 
-    public UsuarioResponse getMonedas(String id){
-        return new UsuarioResponse(usuarioRepository.findById(id).orElseThrow(()->
-                new BusinessException(HttpStatus.NOT_FOUND,"el usuario no existe")));
+    public UsuarioDto getMonedas(String id){
+        UsuarioDto usuarioDto = new UsuarioDto();
+        usuarioDto.toGetMonedasResponse(usuarioRepository.findById(id).orElseThrow(()->
+                new BusinessException(HttpStatus.NOT_FOUND,"el usuario no existe"))
+        );
+        return usuarioDto;
     }
 }
