@@ -3,6 +3,7 @@ package tht.adaptive.ApiUlion.DTOs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tht.adaptive.ApiUlion.entities.PremioEntity;
 
 import java.time.LocalDate;
 
@@ -16,11 +17,21 @@ public class PremioDto {
     private String urlLogo;//no esta si este objeto esta dentro de "EmpresaDto"
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-    private int cantidad;
-    private Boolean esCantidadPorMes;
+    private int cantidadDisponible;
+    private Integer cantidadPorMes;//fijo, sirve para recetear 'cantidadDisponible'
     //datos de premiosDelUsuario
     private LocalDate fechaComprado;
     private LocalDate fechaReclamado;
     private String codigo;
     private String usuario;
+
+    public PremioDto(PremioEntity pe){
+        this.id=pe.getId();
+        this.premio=pe.getPremio();
+        this.empresa=pe.getEmpresa();
+        this.fechaInicio=pe.getFechaInicio();
+        this.fechaFin=pe.getFechaFin();
+        this.cantidadDisponible=pe.getCantidadDisponible();
+        this.cantidadPorMes=pe.getCantidadPorMes();
+    }
 }

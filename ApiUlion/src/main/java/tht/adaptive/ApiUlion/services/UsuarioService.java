@@ -2,6 +2,7 @@ package tht.adaptive.ApiUlion.services;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
 import tht.adaptive.ApiUlion.configs.exceptions.BusinessException;
 import tht.adaptive.ApiUlion.entities.UsuarioEntity;
@@ -10,9 +11,11 @@ import tht.adaptive.ApiUlion.repositories.UsuarioRepository;
 @Service
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
+    private final EmpresaService empresaService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, EmpresaService empresaService) {
         this.usuarioRepository = usuarioRepository;
+        this.empresaService = empresaService;
     }
 
     public UsuarioDto login(UsuarioDto request){
@@ -36,11 +39,8 @@ public class UsuarioService {
         else{
             throw new BusinessException(HttpStatus.BAD_REQUEST,"telefono o nombre debe no ser nulo");
         }
-
-        UsuarioDto usuarioDto = new UsuarioDto();
-        usuarioDto.toGetLogSignResponse(usuarioEntity);
-        return usuarioDto;
-
+        
+        return new UsuarioDto(usuarioEntity);
     }
 
     public UsuarioDto signIn(UsuarioDto request){
@@ -58,16 +58,17 @@ public class UsuarioService {
             throw new BusinessException(HttpStatus.BAD_REQUEST,"el telefono no puede tener mas de 15 digitos");
         }
         //verificar que el telefono tenga solo numeros
-
-        UsuarioDto usuarioDto = new UsuarioDto();
-        usuarioDto.toGetLogSignResponse(usuarioRepository.save(new UsuarioEntity(request)));
-        return usuarioDto;
+        UsuarioEntity usuarioEntity=new UsuarioEntity(request);
+        if(request.getEmpresa()!=null){
+            usuarioEntity.setEmpresa(empresaService.create(request.getEmpresa()));
+        }
+        return new UsuarioDto(usuarioRepository.save(usuarioEntity));
     }
 
     public UsuarioDto getMonedas(String id){
         UsuarioDto usuarioDto = new UsuarioDto();
-        usuarioDto.toGetMonedasResponse(usuarioRepository.findById(id).orElseThrow(()->
-                new BusinessException(HttpStatus.NOT_FOUND,"el usuario no existe"))
+        usuarioDto.setMonedas(usuarioRepository.findById(id).orElseThrow(()->
+                new BusinessException(HttpStatus.NOT_FOUND,"el usuario no existe")).getMonedas()
         );
         return usuarioDto;
     }

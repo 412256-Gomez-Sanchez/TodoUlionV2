@@ -2,6 +2,7 @@ package tht.adaptive.ApiUlion.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,6 +10,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.http.HttpStatus;
 import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
 import tht.adaptive.ApiUlion.configs.exceptions.BusinessException;
+import tht.adaptive.ApiUlion.services.EmpresaService;
+
 
 @Data
 @NoArgsConstructor
@@ -31,8 +34,7 @@ public class UsuarioEntity {
 
     private String responsabilidad;//administrador, editor de preguntas, editor parcial de preguntas
 
-    @Field(name="id_empresa")
-    private String idEmpresa;
+    private EmpresaEntity empresa;
 
     public UsuarioEntity(UsuarioDto usuarioDto){
         this.contrasenia= usuarioDto.getContrasenia();
@@ -48,9 +50,6 @@ public class UsuarioEntity {
                     &&!usuarioDto.getResponsabilidad().equals("editor parcial de preguntas")){
                 throw new BusinessException(HttpStatus.BAD_REQUEST,"la responsabilidad no puede ser otra mas que: administrador, editor de preguntas o editor parcial de preguntas");
             }
-        }
-        if(usuarioDto.getIdEmpresa()!=null){
-            this.idEmpresa=usuarioDto.getIdEmpresa();
         }
     }
 }

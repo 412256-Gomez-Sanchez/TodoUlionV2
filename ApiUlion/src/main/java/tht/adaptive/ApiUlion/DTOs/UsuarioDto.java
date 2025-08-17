@@ -14,21 +14,16 @@ public class UsuarioDto {//esta clase se usa tanto como para iniciar sesion como
     private String contrasenia;
     private String telefono;
     private Integer monedas;
-    private String idEmpresa;//valor unico y solo existente en "empresas"
+    private EmpresaDto empresa;//valor unico y solo existente en "empresas"
     private String email;//puede ser nulo
     private String responsabilidad;//ESTA VARIABLE NO DEBE SER COMPLETADA SI EL USUARIO NO TENDRA RESPONSABILIDAD
     //responsabilidades esperadas: administrador, editor de preguntas, editor parcial de preguntas
 
-    public void toGetMonedasResponse(UsuarioEntity ue){
-        this.monedas=ue.getMonedas();
-    }
-
-    public void toGetLogSignResponse(UsuarioEntity ue){
+    public UsuarioDto(UsuarioEntity ue){
         this.id=ue.getId();
         this.monedas=ue.getMonedas();
-        if(ue.getIdEmpresa()!=null){
-            this.idEmpresa=ue.getIdEmpresa();
+        if(ue.getEmpresa()!=null){
+            this.empresa=new EmpresaDto(ue.getEmpresa());
         }
-
     }
 }
