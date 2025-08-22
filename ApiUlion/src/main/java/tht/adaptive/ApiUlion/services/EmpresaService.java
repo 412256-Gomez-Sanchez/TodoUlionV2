@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import tht.adaptive.ApiUlion.DTOs.EmpresaDto;
 import tht.adaptive.ApiUlion.DTOs.PremioDto;
 import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
@@ -31,6 +32,22 @@ public class EmpresaService {
         this.premioService = premioService;
     }
 
+    public String guardarLogo(MultipartFile logo){
+        if(logo==null || logo.isEmpty()){
+            throw new BusinessException(HttpStatus.BAD_REQUEST,"el logo no puede ser nulo");
+        }
+        if(!logo.getContentType().startsWith("image/") || logo.getContentType().equals("image/gif")){
+            throw new BusinessException(HttpStatus.BAD_REQUEST,"la imagen debe ser jpg o png");
+        }
+
+        try{
+            return manejarArchivo.guardar(logo, "/logosEmpresas/");
+        }
+        catch (IOException e){
+            throw new BusinessException(HttpStatus.CONFLICT,"no se pudo guardar la imagen: "+e);
+        }
+    }
+
     public EmpresaEntity create(EmpresaDto empresaDto){
         if(empresaDto.getNombre()==null||empresaDto.getNombre().isEmpty()){
             throw new BusinessException(HttpStatus.BAD_REQUEST,"el nombre de la empresa no puede ser nulo ni estar en blanco");
@@ -39,13 +56,12 @@ public class EmpresaService {
             throw new BusinessException(HttpStatus.BAD_REQUEST,"la empresa debe tener un detalle indicando como los jugadores se comunicaran a ella");
         }
 
-        //crear empresa y despues crear usuario
         EmpresaEntity empresaEntity=new EmpresaEntity(empresaDto);
 
         if(empresaDto.getLogo()!=null && !empresaDto.getLogo().isEmpty()){
             try{
                 empresaEntity.setNombreLogo(
-                        manejarArchivo.guardar(empresaDto.getLogo(), Paths.get("/logosEmpresas/"))
+                        manejarArchivo.guardar(empresaDto.getLogo(),"/logosEmpresas/")
                 );
             }
             catch (IOException e){

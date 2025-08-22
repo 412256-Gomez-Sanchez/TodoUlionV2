@@ -5,18 +5,28 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ManejarArchivo {
-    public String guardar(MultipartFile archivo, Path directorio) throws IOException {
-        byte[] bytes = archivo.getBytes();
+    public String guardar(MultipartFile archivo, String subCarpeta) throws IOException {
+        // Obtener la ruta del directorio de trabajo actual
+        String directorioRaiz = System.getProperty("user.dir");
 
-        // Generar un nombre de archivo único
-        String nombreArchivo = System.currentTimeMillis() + "_" + archivo.getOriginalFilename();
-        Path directorioArchivo = directorio.resolve(nombreArchivo);
+        // Construir la ruta completa a la carpeta de uploads y la subcarpeta
+        Path rutaCompleta = Paths.get(directorioRaiz, "uploads", subCarpeta);
+
+        // Crear las carpetas si no existen
+        if (!Files.exists(rutaCompleta)) {
+            Files.createDirectories(rutaCompleta);
+        }
+
+        // Generar un nombre de archivo único para evitar colisiones
+        String nombreOriginal = archivo.getOriginalFilename();
+        String nombreArchivo = System.currentTimeMillis() + "_" + nombreOriginal;
+        Path rutaArchivoFinal = rutaCompleta.resolve(nombreArchivo);
 
         // Guardar el archivo
-        //Files.copy(archivo.getInputStream(), directorioArchivo);
-        Files.write(directorioArchivo,bytes);
+        Files.write(rutaArchivoFinal, archivo.getBytes());
 
         return nombreArchivo;
     }

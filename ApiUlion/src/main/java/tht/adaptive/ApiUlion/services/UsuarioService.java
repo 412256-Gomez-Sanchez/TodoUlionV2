@@ -3,6 +3,7 @@ package tht.adaptive.ApiUlion.services;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
 import tht.adaptive.ApiUlion.configs.exceptions.BusinessException;
 import tht.adaptive.ApiUlion.entities.UsuarioEntity;
@@ -71,5 +72,23 @@ public class UsuarioService {
                 new BusinessException(HttpStatus.NOT_FOUND,"el usuario no existe")).getMonedas()
         );
         return usuarioDto;
+    }
+
+    //no debe usarse en un endpoint
+    public UsuarioEntity getUsuarioById(String id){
+        return usuarioRepository.findById(id).orElseThrow(()->
+                new BusinessException(HttpStatus.NOT_FOUND,"usuario no encontrado"));
+    }
+
+    public void guardarLogoEmpresa(String id, MultipartFile logo){
+        if(id==null || id.isEmpty()){
+            throw new BusinessException(HttpStatus.BAD_REQUEST,"el id del usuario no puede ser nulo ni estar vacio");
+        }
+        UsuarioEntity usuarioEntity=usuarioRepository.findById(id).orElseThrow(()->
+                new BusinessException(HttpStatus.NOT_FOUND,"usuario no encontrado"));
+
+        usuarioEntity.getEmpresa().setNombreLogo(empresaService.guardarLogo(logo));
+
+        usuarioRepository.save(usuarioEntity);
     }
 }

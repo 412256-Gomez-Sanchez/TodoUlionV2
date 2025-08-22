@@ -1,6 +1,7 @@
 package tht.adaptive.ApiUlion.controllers;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
 import tht.adaptive.ApiUlion.services.UsuarioService;
 
@@ -30,5 +31,10 @@ public class UsuarioController {
     public UsuarioDto getMonedas(@PathVariable String id){
         System.out.println("getMonedas");
         return usuarioService.getMonedas(id);
+    }
+
+    @PostMapping("/{id}/update/logo")
+    public void guardarLogo(@PathVariable String id,@RequestParam MultipartFile logo){
+        usuarioService.guardarLogoEmpresa(id,logo);
     }
 }
