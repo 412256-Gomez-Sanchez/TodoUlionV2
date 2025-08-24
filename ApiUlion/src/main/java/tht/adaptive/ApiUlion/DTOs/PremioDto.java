@@ -13,8 +13,6 @@ import java.time.LocalDate;
 public class PremioDto {
     private String id;
     private String premio;
-    private String empresa;//no esta si este objeto esta dentro de "EmpresaDto"
-    private String urlLogo;//no esta si este objeto esta dentro de "EmpresaDto"
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private int cantidadDisponible;
@@ -28,7 +26,6 @@ public class PremioDto {
     public PremioDto(PremioEntity pe){
         this.id=pe.getId();
         this.premio=pe.getPremio();
-        this.empresa=pe.getEmpresa();
         this.fechaInicio=pe.getFechaInicio();
         this.fechaFin=pe.getFechaFin();
         this.cantidadDisponible=pe.getCantidadDisponible();

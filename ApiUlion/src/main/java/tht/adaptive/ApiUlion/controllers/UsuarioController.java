@@ -32,9 +32,4 @@ public class UsuarioController {
         System.out.println("getMonedas");
         return usuarioService.getMonedas(id);
     }
-
-    @PostMapping("/{id}/update/logo")
-    public void guardarLogo(@PathVariable String id,@RequestParam MultipartFile logo){
-        usuarioService.guardarLogoEmpresa(id,logo);
-    }
 }

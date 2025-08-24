@@ -7,5 +7,4 @@ import tht.adaptive.ApiUlion.entities.PremioEntity;
 import java.util.List;
 
 public interface PremioRepository extends MongoRepository<PremioEntity,String> {
-    List<PremioEntity> findByEmpresa(String empresa);
 }

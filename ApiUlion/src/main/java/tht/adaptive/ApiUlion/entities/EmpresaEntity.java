@@ -13,8 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Document(collection="empresas")
 public class EmpresaEntity {
-    @Id
-    private String id;
 
     private String nombre;
 
@@ -23,10 +21,9 @@ public class EmpresaEntity {
 
     private String detalles;//para que las empresas especifiquen como los clientes puede comunicarse con ellas
 
+    private List<PremioEntity> premios;
+
     public EmpresaEntity(EmpresaDto ed){
-        if(ed.getId()!=null){
-            this.id=ed.getId();
-        }
         this.nombre=ed.getNombre();
         this.detalles=ed.getDetalles();
     }

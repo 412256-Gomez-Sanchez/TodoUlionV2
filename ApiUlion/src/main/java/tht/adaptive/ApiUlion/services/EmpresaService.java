@@ -58,26 +58,6 @@ public class EmpresaService {
 
         EmpresaEntity empresaEntity=new EmpresaEntity(empresaDto);
 
-        if(empresaDto.getLogo()!=null && !empresaDto.getLogo().isEmpty()){
-            try{
-                empresaEntity.setNombreLogo(
-                        manejarArchivo.guardar(empresaDto.getLogo(),"/logosEmpresas/")
-                );
-            }
-            catch (IOException e){
-                throw new BusinessException(HttpStatus.CONFLICT,"no se pudo guardar la imagen");
-            }
-        }
-
         return empresaEntity;
-    }
-
-    public EmpresaDto getByName(String nombreEmpresa){
-        EmpresaDto empresaDto=new EmpresaDto(empresaRepository.findById(nombreEmpresa).orElseThrow(()->
-                new BusinessException(HttpStatus.NOT_FOUND,"empresa no encontrada")));
-
-        empresaDto.setPremios(premioService.getPremiosByEmpresa(nombreEmpresa));
-
-        return empresaDto;
     }
 }
