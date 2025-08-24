@@ -1,11 +1,15 @@
 package tht.adaptive.ApiUlion.repositories;
 
 import org.springframework.data.domain.Limit;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import tht.adaptive.ApiUlion.entities.PremioEntity;
 import tht.adaptive.ApiUlion.entities.UsuarioEntity;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +20,15 @@ public interface UsuarioRepository extends MongoRepository<UsuarioEntity,String>
 
     Optional<UsuarioEntity> findByEmpresa_Nombre(String empresaNombre);
 
-    @Query("{ 'empresa': { $exists: true, $ne: null }, 'empresa.premios': { $not: { $size: 0 }, $ne: null } }")
-    List<UsuarioEntity> findByEmpresaPremiosNotEmpty();
+    @Aggregation(pipeline = {
+            // 1. Filtrar los documentos de usuario que tienen una empresa y premios
+            "{ '$match': { 'empresa.premios': { '$not': { '$size': 0 }, '$ne': null }, 'empresa': { '$exists': true, '$ne': null } } }",
+
+            // 2. Proyectar los documentos, pero filtrando los premios dentro del array 'premios'
+            "{ '$project': {'empresa': { 'nombre': '$empresa.nombre', 'nombre_logo':'$empresa.nombre_logo', 'detalles': '$empresa.detalles', 'premios': { '$filter': { 'input': '$empresa.premios', 'as': 'premio', 'cond': { '$and': [ { '$lte': [ '$$premio.fecha_inicio', ?0 ] }, { '$gt': [ '$$premio.fecha_fin', ?0 ] } ] } } } } } }",
+
+            // 3. (Opcional) Filtrar de nuevo para solo mostrar usuarios que tienen al menos un premio activo
+            "{ '$match': { 'empresa.premios': { '$not': { '$size': 0 }, '$ne': null } } }"
+    })
+    List<UsuarioEntity> findByEmpresaPremiosNotEmpty(LocalDate fechaActual);
 }

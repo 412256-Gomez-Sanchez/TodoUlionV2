@@ -13,6 +13,8 @@ import tht.adaptive.ApiUlion.entities.PremioEntity;
 import tht.adaptive.ApiUlion.entities.UsuarioEntity;
 import tht.adaptive.ApiUlion.repositories.UsuarioRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -135,7 +137,7 @@ public class UsuarioService {
     }
 
     public List<EmpresaDto> getAllPremios(){
-        List<UsuarioEntity> usuarioEntities=usuarioRepository.findByEmpresaPremiosNotEmpty();
+        List<UsuarioEntity> usuarioEntities=usuarioRepository.findByEmpresaPremiosNotEmpty(LocalDate.now());
         List<EmpresaDto> empresaDtos=new ArrayList<>();
         for(UsuarioEntity usuario:usuarioEntities){
             empresaDtos.add(new EmpresaDto(usuario.getEmpresa()));
