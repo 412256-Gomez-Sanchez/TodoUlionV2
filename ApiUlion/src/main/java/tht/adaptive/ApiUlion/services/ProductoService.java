@@ -8,6 +8,8 @@ import tht.adaptive.ApiUlion.entities.ProductoEntity;
 import tht.adaptive.ApiUlion.repositories.ProductoRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProductoService {
@@ -97,5 +99,23 @@ public class ProductoService {
             }
         }
         productoRepository.save(productoEntity);
+    }
+
+    public List<ProductoDto> getAll(){
+        List<ProductoDto> productoDtos = new ArrayList<>();
+        List<ProductoEntity> productoEntities = productoRepository.findAll();
+        for(ProductoEntity productoEntity:productoEntities){
+            ProductoDto productoDto=new ProductoDto(productoEntity);
+            productoDtos.add(productoDto);
+        }
+        return productoDtos;
+    }
+
+    public ProductoDto getById(String id){
+        if(id==null || id.isEmpty()){
+            throw new BusinessException(HttpStatus.BAD_REQUEST,"el 'id' no puede ser nulo ni estar vacio");
+        }
+        return new ProductoDto(productoRepository.findById(id).orElseThrow(()->
+                new BusinessException(HttpStatus.NOT_FOUND,"no se encontro el producto con id: "+id)));
     }
 }
