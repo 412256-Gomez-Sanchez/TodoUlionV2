@@ -27,7 +27,7 @@ public class PremioEntity {
     private LocalDate fechaFin;
 
     @Field(name="cantidad_disponible")
-    private int cantidadDisponible;
+    private Integer cantidadDisponible;
 
     @Field(name="cantidad_por_mes")
     private Integer cantidadPorMes;//fijo, es para recetear 'cantidadDisponible'
@@ -46,4 +46,5 @@ public class PremioEntity {
             this.cantidadPorMes=premioDto.getCantidadPorMes();
         }
     }
+
 }

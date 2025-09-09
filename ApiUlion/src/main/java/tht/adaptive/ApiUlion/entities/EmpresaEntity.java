@@ -1,4 +1,5 @@
 package tht.adaptive.ApiUlion.entities;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.Data;
@@ -13,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @Document(collection="empresas")
 public class EmpresaEntity {
+    @Id
+    private String id=new ObjectId().toString();
 
     private String nombre;
 
@@ -22,6 +25,9 @@ public class EmpresaEntity {
     private String detalles;//para que las empresas especifiquen como los clientes puede comunicarse con ellas
 
     private List<PremioEntity> premios;
+
+    @Field(name="premios_del_usuario")
+    private List<PremioDelUsuarioEntity> premiosDelUsuario;
 
     public EmpresaEntity(EmpresaDto ed){
         this.nombre=ed.getNombre();

@@ -3,14 +3,14 @@ package tht.adaptive.ApiUlion.DTOs;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tht.adaptive.ApiUlion.entities.ProductoEntity;
+import tht.adaptive.ApiUlion.entities.TransaccionEntity;
 
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProductoDto {
+public class TransaccionDto {
     private String id;
     private String descripcion;
     private Integer precio;
@@ -19,7 +19,7 @@ public class ProductoDto {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    public ProductoDto(ProductoEntity pe){
+    public TransaccionDto(TransaccionEntity pe){
         this.id=pe.getId();
         this.descripcion=pe.getDescripcion();
         this.precio=pe.getPrecio();

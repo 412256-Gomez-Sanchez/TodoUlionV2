@@ -12,6 +12,8 @@ import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
 import tht.adaptive.ApiUlion.configs.exceptions.BusinessException;
 import tht.adaptive.ApiUlion.services.EmpresaService;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -35,6 +37,9 @@ public class UsuarioEntity {
     private String responsabilidad;//administrador, editor de preguntas, editor parcial de preguntas
 
     private EmpresaEntity empresa;
+
+    @Field(name="premios_del_usuario_empresas")
+    private List<EmpresaEntity> premiosDelUsuarioEmpresas;
 
     public UsuarioEntity(UsuarioDto usuarioDto){
         this.contrasenia= usuarioDto.getContrasenia();

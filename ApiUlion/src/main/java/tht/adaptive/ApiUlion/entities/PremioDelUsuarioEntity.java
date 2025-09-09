@@ -2,6 +2,7 @@ package tht.adaptive.ApiUlion.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -15,10 +16,7 @@ public class PremioDelUsuarioEntity {
     @Id
     private String id;
 
-    @Field(name = "id_premio")
-    private String idPremio;
-
-    private String duenio;
+    private PremioEntity premio;
 
     private String codigo;
 

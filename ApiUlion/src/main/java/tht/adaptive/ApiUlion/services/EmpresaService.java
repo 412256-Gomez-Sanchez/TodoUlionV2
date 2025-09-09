@@ -23,7 +23,7 @@ import java.util.List;
 public class EmpresaService {
     private final EmpresaRepository empresaRepository;
     private final PremioService premioService;
-    ManejarArchivo manejarArchivo=new ManejarArchivo();
+    ManejarArchivo manejarArchivo;//=new ManejarArchivo();
 
     private final String carpetaLogos= "/logosEmpresas/";
 
@@ -56,7 +56,7 @@ public class EmpresaService {
             throw new BusinessException(HttpStatus.BAD_REQUEST,"la empresa debe tener un detalle indicando como los jugadores se comunicaran a ella");
         }
 
-        EmpresaEntity empresaEntity=new EmpresaEntity(empresaDto);
+        EmpresaEntity empresaEntity = new EmpresaEntity(empresaDto);
 
         return empresaEntity;
     }

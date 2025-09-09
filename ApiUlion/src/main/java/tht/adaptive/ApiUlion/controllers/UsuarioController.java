@@ -2,6 +2,8 @@ package tht.adaptive.ApiUlion.controllers;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import tht.adaptive.ApiUlion.DTOs.DoTransaccionDto;
+import tht.adaptive.ApiUlion.DTOs.PremioDto;
 import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
 import tht.adaptive.ApiUlion.services.UsuarioService;
 
@@ -31,5 +33,11 @@ public class UsuarioController {
     public UsuarioDto getMonedas(@PathVariable String id){
         System.out.println("getMonedas");
         return usuarioService.getMonedas(id);
+    }
+
+    @PostMapping("/transacciones")
+    public void doTransaccion(@RequestBody DoTransaccionDto doTransaccionDto){
+        System.out.println("doTransaccion");
+        usuarioService.doTransaccion(doTransaccionDto);
     }
 }

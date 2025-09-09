@@ -7,8 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ManejarArchivo {
-    public String guardar(MultipartFile archivo, String subCarpeta) throws IOException {
+public final class ManejarArchivo {
+    private ManejarArchivo(){
+
+    }
+
+    public static String guardar(MultipartFile archivo, String subCarpeta) throws IOException {
         // Obtener la ruta del directorio de trabajo actual
         String directorioRaiz = System.getProperty("user.dir");
 

@@ -3,14 +3,12 @@ package tht.adaptive.ApiUlion.services;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
-import tht.adaptive.ApiUlion.DTOs.EmpresaDto;
-import tht.adaptive.ApiUlion.DTOs.PremioDto;
-import tht.adaptive.ApiUlion.DTOs.UsuarioDto;
+import tht.adaptive.ApiUlion.DTOs.*;
+import tht.adaptive.ApiUlion.compartidos.GenerarString;
 import tht.adaptive.ApiUlion.configs.exceptions.BusinessException;
-import tht.adaptive.ApiUlion.entities.EmpresaEntity;
-import tht.adaptive.ApiUlion.entities.PremioEntity;
-import tht.adaptive.ApiUlion.entities.UsuarioEntity;
+import tht.adaptive.ApiUlion.entities.*;
 import tht.adaptive.ApiUlion.repositories.UsuarioRepository;
 
 import java.time.LocalDate;
@@ -24,11 +22,13 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final EmpresaService empresaService;
     private final PremioService premioService;
+    private final TransaccionService transaccionService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, EmpresaService empresaService, PremioService premioService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, EmpresaService empresaService, PremioService premioService, TransaccionService transaccionService) {
         this.usuarioRepository = usuarioRepository;
         this.empresaService = empresaService;
         this.premioService = premioService;
+        this.transaccionService = transaccionService;
     }
 
     public UsuarioDto login(UsuarioDto request){
@@ -145,4 +145,65 @@ public class UsuarioService {
 
         return empresaDtos;
     }
+
+    public UsuarioEntity getRandomEmpresaWithRandomPremio(){
+        return usuarioRepository.findRandomEmpresaWithRandomPremio(LocalDate.now()).orElseThrow(()->
+                new BusinessException(HttpStatus.NOT_FOUND,"No existen premios en la base de datos"));
+    }
+
+    public void doTransaccion(DoTransaccionDto doTransaccionDto){
+        TransaccionDto transaccionDto=transaccionService.getById(doTransaccionDto.getIdTransaccion());
+        UsuarioEntity usuarioEntity=usuarioRepository.findById(doTransaccionDto.getIdUsuario()).orElseThrow(()->
+                new BusinessException(HttpStatus.NOT_FOUND,"usuario no encontrado"));
+
+        int valorFinal=0;
+        if(transaccionDto.getOferta()!=null){
+            valorFinal=transaccionDto.getPrecio()*(transaccionDto.getOferta()/100);
+        }
+        else{
+            valorFinal=transaccionDto.getPrecio();
+        }
+
+        if(valorFinal+usuarioEntity.getMonedas()<0){
+            throw new BusinessException(HttpStatus.PAYMENT_REQUIRED,"el usuario no tiene las monedas suficientes");
+        }
+
+        usuarioEntity.setMonedas(usuarioEntity.getMonedas()+valorFinal);
+        //elegir premio random y asignarlo a la lista del usuario
+        if(transaccionDto.getId().equals("68bf48c180abc5781ddf1ec2"))//el string corresponde al id del tipo transaccion de premio
+        {
+            UsuarioEntity usuarioEmpresaEntity = getRandomEmpresaWithRandomPremio();
+            usuarioEmpresaEntity.getEmpresa().getPremios().get(0).setCantidadDisponible(usuarioEmpresaEntity.getEmpresa().getPremios().get(0).getCantidadDisponible()-1);
+            usuarioRepository.save(usuarioEmpresaEntity);
+            //convierto en nulos los valores que no me interesan guardar
+            usuarioEmpresaEntity.getEmpresa().getPremios().get(0).setFechaInicio(null);
+            usuarioEmpresaEntity.getEmpresa().getPremios().get(0).setCantidadPorMes(null);
+            usuarioEmpresaEntity.getEmpresa().getPremios().get(0).setCantidadDisponible(null);
+
+            PremioDelUsuarioEntity pdue=new PremioDelUsuarioEntity();
+            pdue.setFechaComprado(LocalDate.now());
+            pdue.setCodigo(GenerarString.generateRandomString(6));
+            pdue.setPremio(usuarioEmpresaEntity.getEmpresa().getPremios().get(0));
+
+            boolean flag=false;
+            if(usuarioEntity.getPremiosDelUsuarioEmpresas()==null) {
+                usuarioEntity.setPremiosDelUsuarioEmpresas(new ArrayList<>());
+            }
+            else{
+                for(EmpresaEntity ee:usuarioEntity.getPremiosDelUsuarioEmpresas()){
+                    if(ee.getId().equals(usuarioEmpresaEntity.getEmpresa().getId())){
+                        ee.getPremiosDelUsuario().add(pdue);
+                        flag=true;
+                        break;
+                    }
+                }
+            }
+            if(!flag){
+                usuarioEntity.getPremiosDelUsuarioEmpresas().add(usuarioEmpresaEntity.getEmpresa());
+            }
+        }
+        usuarioRepository.save(usuarioEntity);
+
+    }
+
 }

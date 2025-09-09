@@ -5,14 +5,14 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import tht.adaptive.ApiUlion.DTOs.ProductoDto;
+import tht.adaptive.ApiUlion.DTOs.TransaccionDto;
 
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-@Document(collection="productos")
-public class ProductoEntity {
+@Document(collection="transacciones")
+public class TransaccionEntity {
     @Id
     private String id;
 
@@ -28,17 +28,17 @@ public class ProductoEntity {
     @Field(name="fecha_fin")
     private LocalDate fechaFin;
 
-    public ProductoEntity(ProductoDto productoDto){
-        if(productoDto.getId()!=null){
-            this.id=productoDto.getId();
+    public TransaccionEntity(TransaccionDto transaccionDto){
+        if(transaccionDto.getId()!=null){
+            this.id= transaccionDto.getId();
         }
-        this.descripcion=productoDto.getDescripcion();
-        this.precio=productoDto.getPrecio();
+        this.descripcion= transaccionDto.getDescripcion();
+        this.precio= transaccionDto.getPrecio();
 
-        if(productoDto.getOferta()!=null){
-            this.oferta=productoDto.getOferta();
-            this.fechaInicio=productoDto.getFechaInicio();
-            this.fechaFin=productoDto.getFechaFin();
+        if(transaccionDto.getOferta()!=null){
+            this.oferta= transaccionDto.getOferta();
+            this.fechaInicio= transaccionDto.getFechaInicio();
+            this.fechaFin= transaccionDto.getFechaFin();
         }
     }
 }
